@@ -1,0 +1,25 @@
+# Use root/example as user/password credentials
+version: '3.8'
+
+services:
+
+  node-red:
+    build: .
+    # image: nodered/node-red:latest-22
+    restart: unless-stopped
+    ports:
+      - "1889:1880"
+    volumes:
+      - ./node-red-data:/data
+
+  front_cfwV2:
+    container_name: front_cfwV2
+    image: nginx:1.25.3-alpine-slim
+    restart: unless-stopped
+    ports:
+      - "98:80"
+    volumes:
+      - ./nginx_cfw/website:/usr/share/nginx/html
+      - ./nginx_cfw/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - node-red

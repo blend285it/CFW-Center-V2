@@ -1,0 +1,1070 @@
+[
+    {
+        "id": "3c0d72dc24f31b4b",
+        "type": "tab",
+        "label": "XwebCore-CFW",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "05c3b09da1a0162c",
+        "type": "inject",
+        "z": "3c0d72dc24f31b4b",
+        "name": "start",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "action",
+                "v": "start",
+                "vt": "str"
+            }
+        ],
+        "repeat": "120",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 170,
+        "y": 160,
+        "wires": [
+            [
+                "e6f83b86574999bf"
+            ]
+        ]
+    },
+    {
+        "id": "f083c8b1bf778a0c",
+        "type": "inject",
+        "z": "3c0d72dc24f31b4b",
+        "name": "stop",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "reset",
+                "v": "1",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 170,
+        "y": 340,
+        "wires": [
+            [
+                "e6f83b86574999bf"
+            ]
+        ]
+    },
+    {
+        "id": "e6f83b86574999bf",
+        "type": "trigger",
+        "z": "3c0d72dc24f31b4b",
+        "name": "",
+        "op1": "",
+        "op2": "0",
+        "op1type": "pay",
+        "op2type": "str",
+        "duration": "0",
+        "extend": false,
+        "overrideDelay": false,
+        "units": "ms",
+        "reset": "",
+        "bytopic": "all",
+        "topic": "topic",
+        "outputs": 1,
+        "x": 320,
+        "y": 240,
+        "wires": [
+            [
+                "9757618cf1594456"
+            ]
+        ]
+    },
+    {
+        "id": "ecf317a7a652f0cd",
+        "type": "change",
+        "z": "3c0d72dc24f31b4b",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "reset",
+                "pt": "msg",
+                "to": "1",
+                "tot": "num"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 420,
+        "y": 300,
+        "wires": [
+            [
+                "e6f83b86574999bf"
+            ]
+        ]
+    },
+    {
+        "id": "2ca3bbb2b5032e66",
+        "type": "debug",
+        "z": "3c0d72dc24f31b4b",
+        "name": "debug 19",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 700,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "4ac4df0ae07767b4",
+        "type": "function",
+        "z": "3c0d72dc24f31b4b",
+        "name": "change settings",
+        "func": "let endpointConfigs = msg.config_url.map(x => {\n    let { mac_address, url, username, password } = x;\n    let auth = { auth_mode: \"standard\", username, password };\n    let mac = mac_address;\n    let urls = {\n        sysinfo: url + \"/cgi-bin/sysinfo.lua\",\n        login: url + \"/cgi-bin/login.lua\",\n        stream: url + \"/cgi-bin/stream.lua\",\n        getsetup: url + \"/cgi-bin/getsetup.lua\",\n        alarms: url + \"/cgi-bin/alarms.lua\"\n    }\n    return { mac, host: url, urls, auth };\n});\nmsg.payload = {\n    endpointConfigs,\n    setEnableAll: true,\n    setGetsysinfoAll: true,\n    setGetsetupAll: true,\n    processLimited: 100,\n    requestTimeout: 30000,\n}\nmsg.action = \"changeSetting\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 460,
+        "y": 100,
+        "wires": [
+            [
+                "8fb95b7f193f0780",
+                "9757618cf1594456"
+            ]
+        ]
+    },
+    {
+        "id": "7c77ddb2affa942c",
+        "type": "inject",
+        "z": "3c0d72dc24f31b4b",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 160,
+        "y": 60,
+        "wires": [
+            [
+                "c08f089bcbb5f95a"
+            ]
+        ]
+    },
+    {
+        "id": "c08f089bcbb5f95a",
+        "type": "function",
+        "z": "3c0d72dc24f31b4b",
+        "name": "CFW",
+        "func": "var sites = [\n    {\n        \"id\": \"1\",\n        \"mac_address\": \"000AF681D19F\",\n        \"xweb_name\": \"CFW Srinakarin Refrigeration\",\n        \"external_ip\": \"http://xweb-vpn.dyndns.org:55002/\",\n        \"url\": \"http://10.109.0.2:10702/\",\n        \"username\": \"Admin\",\n        \"password\": \"Admin\",\n        \"owner\": \"Carrier\"\n    },\n    {\n        \"id\": \"2\",\n        \"mac_address\": \"000AF681D1AD\",\n        \"xweb_name\": \"Go Wholesale Chaingmai Refrigeration\",\n        \"external_ip\": \"http://xweb-vpn.dyndns.org:55102/\",\n        \"url\": \"http://10.109.0.3:10702/\",\n        \"username\": \"Admin\",\n        \"password\": \"Admin\",\n        \"owner\": \"Carrier\"\n    },\n    {\n        \"id\": \"3\",\n        \"mac_address\": \"000AF681D1AB\",\n        \"xweb_name\": \"CFW Amata Refrigeration\",\n        \"external_ip\": \"http://xweb-vpn.dyndns.org:55202/\",\n        \"url\": \"http://10.109.0.4:10702/\",\n        \"username\": \"Admin\",\n        \"password\": \"Admin\",\n        \"owner\": \"Carrier\"\n    },\n    {\n        \"id\": \"4\",\n        \"mac_address\": \"000AF681D1A1\",\n        \"xweb_name\": \"Go Wholesale Pattaya Refrigeration\",\n        \"external_ip\": \"http://xweb-vpn.dyndns.org:55302/\",\n        \"url\": \"http://10.109.0.5:10702/\",\n        \"username\": \"Admin\",\n        \"password\": \"Admin\",\n        \"owner\": \"Carrier\"\n    },\n    {\n        \"id\": \"5\",\n        \"mac_address\": \"000AF681CB72\",\n        \"xweb_name\": \"CFW  Rama 2 Refrigeration\",\n        \"external_ip\": \"http://xweb-vpn.dyndns.org:55402/\",\n        \"url\": \"http://10.109.0.6:10702/\",\n        \"username\": \"Admin\",\n        \"password\": \"Admin\",\n        \"owner\": \"Carrier\"\n    },\n    {\n        \"id\": \"6\",\n        \"mac_address\": \"000AF681D1AF\",\n        \"xweb_name\": \"CFW RAMKHAMHANG Refrigeration\",\n        \"external_ip\": \"http://xweb-vpn.dyndns.org:55602/\",\n        \"url\": \"http://xweb-vpn.dyndns.org:55602/\",\n        \"username\": \"Admin\",\n        \"password\": \"Admin\",\n        \"owner\": \"Carrier\"\n    }, {\n        \"id\": \"7\",\n        \"mac_address\": \"000AF681D183\",\n        \"xweb_name\": \"Go Wholesale Rang Sit Refrigeration\",\n        \"external_ip\": \"http://xweb-vpn.dyndns.org:55502/\",\n        \"url\": \"http://xweb-vpn.dyndns.org:55502/\",\n        \"username\": \"Admin\",\n        \"password\": \"Admin\",\n        \"owner\": \"Carrier\"\n\n    }, {\n        \"id\": \"8\",\n        \"mac_address\": \"000AF680FADD\",\n        \"xweb_name\": \"Foodland Lad kra Bang\",\n        \"external_ip\": \"http://xweb-vpn.dyndns.org:45102/\",\n        \"url\": \"http://xweb-vpn.dyndns.org:45102/\",\n        \"username\": \"request\",\n        \"password\": \"027220245\",\n        \"owner\": \"Carrier\"\n    }, {\n        \"id\": \"9\",\n        \"mac_address\": \"000AF681D191\",\n        \"xweb_name\": \"Go Wholesale Charoenrat\",\n        \"external_ip\": \"http://xweb-vpn.dyndns.org:55902/\",\n        \"url\": \"http://10.109.0.11:10702/\",\n        \"username\": \"request\",\n        \"password\": \"027220245\",\n        \"owner\": \"Carrier\"\n    }, {\n        \"id\": \"10\",\n        \"mac_address\": \"000AF6146C76\",\n        \"xweb_name\": \"Go Wholesale Charoenrat\",\n        \"external_ip\": \"http://xweb-vpn.dyndns.org:55903/\",\n        \"url\": \"http://10.109.0.11:10703/\",\n        \"username\": \"request\",\n        \"password\": \"027220245\",\n        \"owner\": \"Carrier\"\n    }, {\n        \"id\": \"11\",\n        \"mac_address\": \"000AF6847575\",\n        \"xweb_name\": \"Go Wholesale Udon Thani\",\n        \"external_ip\": \"http://xweb-vpn.dyndns.org:56002/\",\n        \"url\": \"http://10.109.0.12:10702/\",\n        \"username\": \"request\",\n        \"password\": \"027220245\",\n        \"owner\": \"Carrier\"\n    }, {\n        \"id\": \"12\",\n        \"mac_address\": \"000AF6146C77\",\n        \"xweb_name\": \"Go Wholesale Udon Thani\",\n        \"external_ip\": \"http://xweb-vpn.dyndns.org:56003/\",\n        \"url\": \"http://10.109.0.12:10703/\",\n        \"username\": \"request\",\n        \"password\": \"027220245\",\n        \"owner\": \"Carrier\"\n    }, {\n        \"id\": \"13\",\n        \"mac_address\": \"000AF681D1A3\",\n        \"xweb_name\": \"Go Wholesale Phuket 1 (Rawai)\",\n        \"external_ip\": \"http://xweb-vpn.dyndns.org:55702/\",\n        \"url\": \"http://10.109.0.9:10702/\",\n        \"username\": \"request\",\n        \"password\": \"027220245\",\n        \"owner\": \"Carrier\"\n    }, {\n        \"id\": \"14\",\n        \"mac_address\": \"000AF6146782\",\n        \"xweb_name\": \"Go Wholesale Phuket 2\",\n        \"external_ip\": \"http://xweb-vpn.dyndns.org:55802/\",\n        \"url\": \"http://10.109.0.10:10702/\",\n        \"username\": \"request\",\n        \"password\": \"027220245\",\n        \"owner\": \"Carrier\"\n    }, {\n        \"id\": \"15\",\n        \"mac_address\": \"000AF681BBAD\",\n        \"xweb_name\": \"Go Wholesale Phuket 2\",\n        \"external_ip\": \"http://xweb-vpn.dyndns.org:55803/\",\n        \"url\": \"http://10.109.0.10:10703/\",\n        \"username\": \"request\",\n        \"password\": \"027220245\",\n        \"owner\": \"Carrier\"\n    }, {\n        \"id\": \"16\",\n        \"mac_address\": \"000AF684757B\",\n        \"xweb_name\": \"Go Wholesale Khonkaen\",\n        \"external_ip\": \"http://xweb-vpn.dyndns.org:56102/\",\n        \"url\": \"http://10.109.0.13:10702/\",\n        \"username\": \"request\",\n        \"password\": \"027220245\",\n        \"owner\": \"Carrier\"\n    }, {\n        \"id\": \"17\",\n        \"mac_address\": \"000AF6146C79\",\n        \"xweb_name\": \"Go Wholesale Khonkaen\",\n        \"external_ip\": \"http://xweb-vpn.dyndns.org:56103/\",\n        \"url\": \"http://10.109.0.13:10703/\",\n        \"username\": \"request\",\n        \"password\": \"027220245\",\n        \"owner\": \"Carrier\"\n    }, {\n        \"id\": \"18\",\n        \"mac_address\": \"000AF6847573\",\n        \"xweb_name\": \"Go Wholesale Hatyai\",\n        \"external_ip\": \"http://xweb-vpn.dyndns.org:56202/\",\n        \"url\": \"http://10.109.0.14:10702/\",\n        \"username\": \"request\",\n        \"password\": \"027220245\",\n        \"owner\": \"Carrier\"\n    }, {\n        \"id\": \"19\",\n        \"mac_address\": \"000AF6146D2A\",\n        \"xweb_name\": \"Go Wholesale Hatyai\",\n        \"external_ip\": \"http://xweb-vpn.dyndns.org:56203/\",\n        \"url\": \"http://10.109.0.14:10703/\",\n        \"username\": \"request\",\n        \"password\": \"027220245\",\n        \"owner\": \"Carrier\"\n    }\n]\nmsg.config_url = sites;\nmsg.payload = sites;\nmsg.filename = \"/data/files/config_url.json\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 300,
+        "y": 60,
+        "wires": [
+            [
+                "976ce62c8d8c398e",
+                "4ac4df0ae07767b4"
+            ]
+        ]
+    },
+    {
+        "id": "976ce62c8d8c398e",
+        "type": "file",
+        "z": "3c0d72dc24f31b4b",
+        "name": "",
+        "filename": "filename",
+        "filenameType": "msg",
+        "appendNewline": false,
+        "createDir": true,
+        "overwriteFile": "true",
+        "encoding": "none",
+        "x": 460,
+        "y": 60,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "cf9f4814bb940aa4",
+        "type": "inject",
+        "z": "3c0d72dc24f31b4b",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "60",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 130,
+        "y": 480,
+        "wires": [
+            [
+                "6529c719c1b638c7"
+            ]
+        ]
+    },
+    {
+        "id": "6529c719c1b638c7",
+        "type": "function",
+        "z": "3c0d72dc24f31b4b",
+        "name": "filename",
+        "func": "msg.filename = \"/data/files/config_url.json\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 280,
+        "y": 480,
+        "wires": [
+            [
+                "380a48ef62398323"
+            ]
+        ]
+    },
+    {
+        "id": "380a48ef62398323",
+        "type": "file in",
+        "z": "3c0d72dc24f31b4b",
+        "name": "config_url",
+        "filename": "filename",
+        "filenameType": "msg",
+        "format": "utf8",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "none",
+        "allProps": false,
+        "x": 420,
+        "y": 480,
+        "wires": [
+            [
+                "94eb3da68b38e483"
+            ]
+        ]
+    },
+    {
+        "id": "94eb3da68b38e483",
+        "type": "json",
+        "z": "3c0d72dc24f31b4b",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 550,
+        "y": 480,
+        "wires": [
+            [
+                "c6a90319418b4086"
+            ]
+        ]
+    },
+    {
+        "id": "a50cb1486345eda7",
+        "type": "function",
+        "z": "3c0d72dc24f31b4b",
+        "name": "data mappings",
+        "func": "// @ts-nocheck\nlet date_now = new Date().getTime();\nlet limitTime = 900000;\n\nconst isMoreThan15Minutes = (start) => (date_now - start) > limitTime;\n\nconst decodeText = (str) => {\n    const cleaned = str.replace(/%(?![0-9A-Fa-f]{2})/g, '%25');\n    return decodeURIComponent(cleaned);\n}\n\nconst setup_stream = (conf) => {\n    let stream = global.get(\"xstream\") || {};\n    let getsetup = global.get(\"xgetsetup\") || {};\n    let sysInfo = global.get(\"xsysinfo\") || {};\n    let communications = global.get(\"CheckCommunications\") || {};\n\n    let mac = conf.mac_address;\n\n    let cate = {}, devices = {}, status_acq = {}, obj_info = {}, commu = {};\n    cate[mac] = {};\n    devices[mac] = [];\n    status_acq[mac] = {};\n    obj_info[mac] = {};\n    commu[mac] = {};\n\n    /*** BUILD CATEGORY FROM SETUP ***/\n    if (getsetup[mac]?.setup_data?.setup?.ctgs) {\n        let ctgs = getsetup[mac].setup_data.setup.ctgs;\n\n        for (let i in ctgs) {\n            let ctg = ctgs[i];\n            if (!ctg?.devs) continue;\n\n            let cate_encoded = encodeURIComponent(ctg.term);\n            let cateName = decodeText(decodeURIComponent(cate_encoded));\n\n            for (let j in ctg.devs) {\n                let devId = ctg.devs[j];\n                cate[mac][devId] = cateName;\n            }\n        }\n    }\n\n    /*** SYSTEM INFO NAME ***/\n    if (sysInfo[mac]?.sysinfo_data?.info?.name) {\n        let name_encoded = encodeURIComponent(sysInfo[mac].sysinfo_data.info.name);\n        obj_info[mac][\"name\"] = decodeText(decodeURIComponent(name_encoded));\n    }\n\n    /*** STREAM ONLINE/OFFLINE STATUS ***/\n    status_acq[mac].xwebpro_on = stream[mac]?.stream_data?.stream?.acq ?? 0;\n\n    if (stream[mac]?.stream_data?.ts) {\n        let offline_time = Number(stream[mac].stream_data.ts);\n        let overTime = isMoreThan15Minutes(offline_time);\n\n        if (overTime) {\n            if (!communications[mac]) {\n                communications[mac] = {\n                    store_name: conf.xweb_name,\n                    mac_address: mac,\n                    device_name: conf.xweb_name,\n                    device_adr: \"-\",\n                    alarm_name: \"Disconnetion\",\n                    text: \"Disconnetion\",\n                    status: true,\n                    acknow: false,\n                    dateStart: date_now,\n                    offline_count: 0,\n                    offline_timestamp: null,\n                };\n            } else if (!communications[mac].status) {\n                communications[mac] = {\n                    ...communications[mac],\n                    status: true,\n                    acknow: false,\n                    dateStart: date_now,\n                    offline_count: 0,\n                    offline_timestamp: null,\n                };\n            }\n        } else {\n            if (communications[mac]) {\n                communications[mac] = {\n                    ...communications[mac],\n                    status: false,\n                };\n            }\n        }\n    }\n\n    /*** IF STREAM DATA EXISTS → BUILD DEVICE DATA ***/\n    if (stream[mac]?.stream_data?.stream?.data) {\n\n        let deviceStreamData = stream[mac].stream_data.stream.data;\n        let deviceSetup = getsetup[mac]?.setup_data?.devices || {};\n\n        for (let deviceId in deviceStreamData) {\n\n            // ป้องกัน setup ไม่มี device\n            if (!deviceSetup?.[deviceId]?.gen) continue;\n\n            let gen = deviceSetup[deviceId].gen;\n            let vrs = deviceSetup[deviceId]?.vrs || {};\n            let lngVrs = deviceSetup[deviceId]?.lng?.vrs || {};\n\n            let adr = gen.addr2;\n            let name = decodeText(gen.name);\n            let model = gen.model || \"\";\n            let dbpath = gen.dbpath || \"\";\n\n            let deviceCate = cate[mac]?.[deviceId] || \"Others\";\n\n            // object collect points\n            let obj = {\n                analogInput: [],\n                deviceStatus: [],\n                alarm: [],\n                digitalinput: [],\n                outputStatus: [],\n                chartDef: [],\n            };\n\n            // LOOP variable points (index safe)\n            for (let pointId in vrs) {\n                let vr = vrs[pointId];\n                if (!vr || vr.vfr !== 1) continue;\n\n                let groupName = [\"analogInput\", \"deviceStatus\", \"alarm\", \"digitalinput\", \"outputStatus\"][vr.vgrp] || null;\n                // if (!groupName) continue;\n\n                // ป้องกันชื่อจุด\n                let labelSource = lngVrs?.[pointId]?.uvun || lngVrs?.[pointId]?.vun || \"\";\n                let encoded = encodeURIComponent(labelSource);\n                let point_name = decodeText(decodeURIComponent(encoded));\n\n                // read actual value safely\n                let value = deviceStreamData?.[deviceId]?.[pointId] ?? 0;\n\n                // chart definition\n                if (vr?.chartDef?.en === true) {\n                    obj.chartDef.push({\n                        pointId,\n                        name: point_name,\n                        value,\n                        index: pointId,\n                        unit: vr.vudm,\n                    });\n                }\n\n                // push to correct group\n                if (obj[groupName]) {\n                    obj[groupName].push({\n                        pointId,\n                        name: point_name,\n                        value,\n                        unit: vr.vudm,\n                    });\n                }\n            }\n\n            // push device record\n            devices[mac].push({\n                name,\n                adr,\n                cate: deviceCate,\n                uid: deviceId,\n                lanid: gen.addr1,\n                model,\n                dbpath,\n                analogInput: obj.analogInput,\n                deviceStatus: obj.deviceStatus,\n                alarm: obj.alarm,\n                digitalinput: obj.digitalinput,\n                outputStatus: obj.outputStatus,\n                chartDef: obj.chartDef,\n            });\n        }\n    } else {\n\n        /* NO STREAM DATA → offline */\n        communications[mac] = {\n            store_name: conf.xweb_name,\n            mac_address: mac,\n            device_name: conf.xweb_name,\n            device_adr: \"-\",\n            alarm_name: \"Disconnetion\",\n            text: \"Disconnetion\",\n            status: true,\n            acknow: false,\n            dateStart: date_now,\n            offline_count: 0,\n            offline_timestamp: null,\n        };\n    }\n\n    global.set(\"CheckCommunications\", communications);\n\n    return { devices, status_acq, obj_info };\n}\n\n\n/*** BUILD OUTPUT ***/\nconst output = {};\n\nfor (let conf of msg.config_url) {\n    let compares = setup_stream(conf);\n    let mac = conf.mac_address;\n\n    output[mac] = {\n        name: compares?.obj_info[mac]?.name || conf.xweb_name,\n        mac_address: mac,\n        on: compares?.status_acq[mac]?.xwebpro_on ?? 0,\n        devices: compares?.devices[mac] || [],\n    };\n}\n\nnode.status({ fill: \"blue\", shape: \"ring\", text: \"success\" });\n\nmsg.filename = `/data/files/data.json`;\nmsg.payload = output;\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 820,
+        "y": 480,
+        "wires": [
+            [
+                "e4a194e0d8be0697"
+            ]
+        ]
+    },
+    {
+        "id": "c6a90319418b4086",
+        "type": "change",
+        "z": "3c0d72dc24f31b4b",
+        "name": "msg",
+        "rules": [
+            {
+                "t": "set",
+                "p": "config_url",
+                "pt": "msg",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 670,
+        "y": 480,
+        "wires": [
+            [
+                "a50cb1486345eda7"
+            ]
+        ]
+    },
+    {
+        "id": "e4a194e0d8be0697",
+        "type": "file",
+        "z": "3c0d72dc24f31b4b",
+        "name": "data mappings",
+        "filename": "filename",
+        "filenameType": "msg",
+        "appendNewline": false,
+        "createDir": true,
+        "overwriteFile": "true",
+        "encoding": "none",
+        "x": 1020,
+        "y": 480,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "1fac161fd1399749",
+        "type": "inject",
+        "z": "3c0d72dc24f31b4b",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "60",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 130,
+        "y": 600,
+        "wires": [
+            [
+                "2e72d0faf7a70ec5"
+            ]
+        ]
+    },
+    {
+        "id": "2e72d0faf7a70ec5",
+        "type": "function",
+        "z": "3c0d72dc24f31b4b",
+        "name": "Communications",
+        "func": "let communications = global.get(\"CheckCommunications\") || {};\nlet offline = global.get(\"Offline\") || {};\n\nlet Online = {};\nlet Offline = {};\nObject.entries(communications).map(([mac, item]) => {\n    item.status = item.status > 0 ? true : false || item.status;\n    if (item.status) {\n        if (!offline[mac]) {\n            node.status({ fill: \"red\", shape: \"dot\", text: \"Offline \" + item.store_name })\n            Offline[mac] = {\n                store_name: item.store_name,\n                mac_address: item.mac_address,\n                device_name: item.device_name,\n                device_adr: item.device_adr,\n                alarm_name: item.alarm_name,\n                note: \"\",\n                acknow: item.acknow,\n                dateStart: item.dateStart,\n                dateAcknow: null,\n                dateEnd: null,\n            }\n            offline[mac] = Offline[mac];\n        }\n    } else {\n        if (offline[mac]) {\n            node.status({ fill: \"green\", shape: \"dot\", text: \"Online \" + item.store_name })\n            Online[mac] = {\n                ...offline[mac],\n                note: offline[mac]?.acknow == true ? (offline[mac]?.note !== \"Acknowledged\" ? offline[mac]?.note : \"Acknowledged\") : \"Normal\",\n                acknow: item.acknow,\n                dateAcknow: offline[mac]?.acknow == true ? (offline[mac].dateAcknow == null ? new Date().getTime() : offline[mac]?.dateAcknow) : new Date().getTime(),\n                dateEnd: new Date().getTime(),\n            }\n            offline[mac] = Online[mac];\n            delete offline[mac];\n        }\n    }\n});\n\nif (Object.keys(Offline).length > 0 || Object.keys(Online).length > 0) {\n    var Data = {\n        Offline: Object.values(Offline),\n        OfflineShow: Object.values(Offline).length > 0 ? true : false,\n\n        Online: Object.values(Online),\n        OnlineShow: Object.values(Online).length > 0 ? true : false,\n    }\n    global.set(\"Offline\", offline);\n}\nreturn [Data];",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 310,
+        "y": 600,
+        "wires": [
+            [
+                "d5ee1d28d155e5ef"
+            ]
+        ]
+    },
+    {
+        "id": "6f6029a523831a67",
+        "type": "function",
+        "z": "3c0d72dc24f31b4b",
+        "name": "Active Alarms",
+        "func": "let Active_Alarms = global.get(\"Active_Alarms\") || {};\nlet xalarms = global.get(\"xalarms\") || {};\nlet xstream = global.get(\"xstream\") || {};\nlet xgetsetup = global.get(\"xgetsetup\") || {};\nlet xsysinfo = global.get(\"xsysinfo\") || {};\nlet chk_watch = global.get(\"chk_watch\") || {};\nconst values = (obj) => Object.values(obj);\nconst keys = (obj) => Object.keys(obj);\nconst entries = (obj) => Object.entries(obj);\nconst getSetup = (xweb) => xweb.setup_data;\nconst getSysinfo = (xweb) => xweb.sysinfo_data;\n\nconst decodeText = (text) => {\n    try {\n        return decodeURIComponent(text);\n    } catch (err) {\n        return text;\n    }\n}\nlet Active = {};\nlet Stop = {};\n\nconst activeTime = (chk_index) => {\n    let obj = {};\n    for (let [mac, active_xweb] of entries(xalarms)) {\n        let { alarms_data } = active_xweb;\n        if (!alarms_data?.alarms) continue;\n        let alarms = alarms_data.alarms;\n        if (Object.keys(alarms).length === 0) continue;\n        entries(alarms).map(([pid, al]) => {\n            let index = `${mac}_${al.deviceID}_${al.pointID}`;\n            if (index == chk_index) {\n                let startTime = al.start * 1000;\n                let startDateThai = moment(startTime)\n                    .tz(\"Asia/Bangkok\")\n                    .valueOf();\n                obj[chk_index] = {\n                    startTime: startDateThai,\n                }\n            }\n        })\n    }\n    return obj;\n}\nlet date_now = new Date().getTime();\n\nfor (let [mac, xweb_data] of entries(msg.payload)) {\n    let setup_xweb = getSetup(xgetsetup[mac]) || {};\n    let sysinfo_xweb = getSysinfo(xsysinfo[mac]) || {};\n    let { devices } = xweb_data;\n    for (let dev in devices) {\n        for (let al of devices[dev].alarm) {\n            let index = `${mac}_${devices[dev].uid}_${al.pointId}`;\n            al.value = al.value > 0 ? true : false;\n\n            // Case 1: Alarm Active\n            if (al.value) {\n                node.status({ fill: \"red\", shape: \"ring\", text: \"Active \" + decodeText(al.name) });\n                if (!Active_Alarms[index]) {\n                    Active[index] = {\n                        store_name: decodeText(sysinfo_xweb.info.name),\n                        mac_address: mac,\n                        device_name: decodeText(setup_xweb.devices[devices[dev].uid].gen.name),\n                        device_adr: setup_xweb.devices[devices[dev].uid].gen.addr2,\n                        uid: devices[dev].uid,\n                        alarm_name: decodeText(al.name),\n                        dateStart: (activeTime(index)[index] ? activeTime(index)[index].startTime : date_now) ?? date_now,\n                        value: true,\n                    }\n                    Active_Alarms[index] = Active[index];\n                } else {\n                    if (!(Active_Alarms[index].value)) {\n                        Active_Alarms[index].dateStart = activeTime(index)[index]?.startTime ?? date_now;\n                        Active_Alarms[index].value = true;\n                        Active[index] = Active_Alarms[index];\n                    }\n                }\n            } else {\n                if (Active_Alarms[index] && Active_Alarms[index].value !== undefined && Active_Alarms[index].value) {\n                    node.status({ fill: \"green\", shape: \"ring\", text: \"Stop \" + decodeText(al.name) });\n                    Active_Alarms[index] = {\n                        ...Active_Alarms[index],\n                        dateEnd: new Date().getTime(),\n                        value: false,\n                        note: chk_watch[index]?.acknow > 0 ? chk_watch[index]?.note : (chk_watch[index]?.note !== \"Acknow\") ? \"Normal\" : \"Startup\",\n                        dateAcknow: chk_watch[index].timestamp ? chk_watch[index].timestamp : date_now,\n                        dateStart: Active_Alarms[index]?.dateStart\n                    }\n                    Stop[index] = Active_Alarms[index];\n                    delete chk_watch[index];\n                }\n            }\n        }\n    }\n}\n\nif (Object.keys(Active).length > 0 || Object.keys(Stop).length > 0) {\n    var Data = {\n        Active: Object.values(Active),\n        ActiveShow: Object.values(Active).length > 0 ? true : false,\n\n        Stop: Object.values(Stop),\n        StopShow: Object.values(Stop).length > 0 ? true : false,\n    }\n    global.set('chk_watch', chk_watch);\n    global.set(\"Active_Alarms\", Active_Alarms);\n}\nreturn [Data];",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [
+            {
+                "var": "moment",
+                "module": "moment-timezone"
+            }
+        ],
+        "x": 780,
+        "y": 700,
+        "wires": [
+            [
+                "f370dcf6ee69b727"
+            ]
+        ]
+    },
+    {
+        "id": "8354a6574c00de9d",
+        "type": "inject",
+        "z": "3c0d72dc24f31b4b",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "30",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 130,
+        "y": 700,
+        "wires": [
+            [
+                "ff3e75f3df789681"
+            ]
+        ]
+    },
+    {
+        "id": "ff3e75f3df789681",
+        "type": "function",
+        "z": "3c0d72dc24f31b4b",
+        "name": "filename",
+        "func": "msg.filename = `/data/files/data.json`\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 280,
+        "y": 700,
+        "wires": [
+            [
+                "c66d6506d6109b63"
+            ]
+        ]
+    },
+    {
+        "id": "c66d6506d6109b63",
+        "type": "file in",
+        "z": "3c0d72dc24f31b4b",
+        "name": "data mappings",
+        "filename": "filename",
+        "filenameType": "msg",
+        "format": "utf8",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "none",
+        "allProps": false,
+        "x": 440,
+        "y": 700,
+        "wires": [
+            [
+                "b18108d31abcf91d"
+            ]
+        ]
+    },
+    {
+        "id": "71cb314a4f243c57",
+        "type": "template",
+        "z": "3c0d72dc24f31b4b",
+        "name": "SQL script",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "MERGE [CFWcenterAL].[dbo].[ALARMSLOG] AS target\nUSING (\n    VALUES\n{{{values_sql}}}\n) AS src (\n    Store_Name, Mac_Address, Device_Name, Device_Adr,\n    Alarm_Name, Timestamp_Start, Timestamp_End,\n    Note, Timestamp_Acknow\n)\nON (\n    target.Mac_Address = src.Mac_Address AND\n    target.Device_Name = src.Device_Name AND\n    target.Device_Adr = src.Device_Adr AND\n    target.Alarm_Name = src.Alarm_Name AND\n    ISNULL(target.Timestamp_End,'') = ''\n)\nWHEN MATCHED AND src.Timestamp_End IS NOT NULL THEN\n    UPDATE SET\n        target.Timestamp_End    = src.Timestamp_End,\n        target.Note             = src.Note,\n        target.Timestamp_Acknow = src.Timestamp_Acknow\nWHEN NOT MATCHED AND src.Timestamp_End IS NULL THEN\n    INSERT (\n        Store_Name, Mac_Address, Device_Name, Device_Adr,\n        Alarm_Name, Timestamp_Start\n    )\n    VALUES (\n        src.Store_Name, src.Mac_Address, src.Device_Name,\n        src.Device_Adr, src.Alarm_Name, src.Timestamp_Start\n    );\n",
+        "output": "str",
+        "x": 450,
+        "y": 760,
+        "wires": [
+            [
+                "e905af7b9ce79b07",
+                "a1240339961aec34"
+            ]
+        ]
+    },
+    {
+        "id": "a1240339961aec34",
+        "type": "MSSQL-UCG",
+        "z": "3c0d72dc24f31b4b",
+        "mssqlCN": "c5086d6294c30e01",
+        "name": "ALARMS_LOG",
+        "query": "",
+        "outField": "payload",
+        "x": 640,
+        "y": 760,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "9c1d63300c64cc55",
+        "type": "file in",
+        "z": "3c0d72dc24f31b4b",
+        "name": "",
+        "filename": "filename",
+        "filenameType": "msg",
+        "format": "utf8",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "none",
+        "allProps": false,
+        "x": 420,
+        "y": 860,
+        "wires": [
+            [
+                "132f9c11d4d52913"
+            ]
+        ]
+    },
+    {
+        "id": "132f9c11d4d52913",
+        "type": "json",
+        "z": "3c0d72dc24f31b4b",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 550,
+        "y": 860,
+        "wires": [
+            [
+                "4739757129e3341b"
+            ]
+        ]
+    },
+    {
+        "id": "b89287e3f5e09c36",
+        "type": "function",
+        "z": "3c0d72dc24f31b4b",
+        "name": "filename",
+        "func": "\nmsg.filename = \"/data/files/config_url.json\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 280,
+        "y": 860,
+        "wires": [
+            [
+                "9c1d63300c64cc55"
+            ]
+        ]
+    },
+    {
+        "id": "4739757129e3341b",
+        "type": "change",
+        "z": "3c0d72dc24f31b4b",
+        "name": "msg",
+        "rules": [
+            {
+                "t": "set",
+                "p": "config",
+                "pt": "msg",
+                "to": "payload",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "filename",
+                "pt": "msg",
+                "to": "/data/files/data.json",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 670,
+        "y": 860,
+        "wires": [
+            [
+                "749118319aee436a"
+            ]
+        ]
+    },
+    {
+        "id": "c75b0d5c5edde39e",
+        "type": "file",
+        "z": "3c0d72dc24f31b4b",
+        "name": "Data All",
+        "filename": "filename",
+        "filenameType": "msg",
+        "appendNewline": false,
+        "createDir": false,
+        "overwriteFile": "true",
+        "encoding": "none",
+        "x": 1300,
+        "y": 840,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "16101f116384e48f",
+        "type": "file",
+        "z": "3c0d72dc24f31b4b",
+        "name": "Active Alarms",
+        "filename": "filename",
+        "filenameType": "msg",
+        "appendNewline": false,
+        "createDir": false,
+        "overwriteFile": "true",
+        "encoding": "none",
+        "x": 1320,
+        "y": 900,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "44f6e5848ca7f260",
+        "type": "link in",
+        "z": "3c0d72dc24f31b4b",
+        "name": "onClick data",
+        "links": [
+            "33de8045803d9f92"
+        ],
+        "x": 205,
+        "y": 800,
+        "wires": [
+            [
+                "b89287e3f5e09c36"
+            ]
+        ]
+    },
+    {
+        "id": "86671b5390a2be2c",
+        "type": "function",
+        "z": "3c0d72dc24f31b4b",
+        "name": "Data Aggregate",
+        "func": "let data = msg.payload || {};\nlet xalarms = flow.get(\"xalarms\") || {};\nconst entries = (obj) => Object.entries(obj);\nlet date_now = new Date().getTime();\nconst comparesTime = (chk_index) => {\n    let obj = {};\n    for (let [mac, active_xweb] of entries(xalarms)) {\n        let { alarms_data } = active_xweb;\n        if (!alarms_data?.alarms) continue;\n        let alarms = alarms_data.alarms;\n        if (Object.keys(alarms).length === 0) continue;\n        entries(alarms).map(([pid, al]) => {\n            let index = `${mac}_${al.deviceID}_${al.pointID}`;\n            if (index == chk_index) {\n                let startTime = al.start * 1000;\n                obj[chk_index] = {\n                    timestamp: startTime,\n                }\n            }\n        })\n    }\n    return obj;\n}\n\nfunction comparesData(mac) {\n\n    let chk_watch = global.get(\"chk_watch\") || {};\n    let active_alarms = global.get('Active_Alarms') || {};\n\n    let obj = {};\n    obj[mac] = {};\n    let arr = {};\n    arr[mac] = [];\n\n    let obj_info = {};\n    let obj_realtime = {};\n    if (data[mac]) {\n        let status = counter_alarm(data[mac].devices, mac);\n        for (let i in data[mac].devices) {\n            obj_info[data[mac].devices[i].adr] = {};\n\n            obj_realtime[mac] = {};\n            obj_realtime[mac][data[mac].devices[i].adr] = [];\n            for (let ch in data[mac].devices[i].chartDef) {\n                obj_realtime[mac][data[mac].devices[i].adr].push({\n                    name: data[mac].devices[i].chartDef[ch].name,\n                    value: data[mac].devices[i].chartDef[ch].value,\n                    index: data[mac].devices[i].chartDef[ch].index,\n                    unit: data[mac].devices[i].chartDef[ch].unit,\n                })\n            }\n            for (let al in data[mac].devices[i].alarm) {\n                let index = `${data[mac].mac_address}_${data[mac].devices[i].uid}_${data[mac].devices[i].alarm[al].pointId}`;\n                if (data[mac].devices[i].alarm[al].value > 0) {\n                    if (!chk_watch[index]) {\n                        chk_watch[index] = {};\n                        chk_watch[index].note = '';\n                        chk_watch[index].acknow = 0;\n                        chk_watch[index].count = 0;\n                        chk_watch[index].acknow_count = 0;\n                        chk_watch[index].newAl = chk_watch[index].newAl ? chk_watch[index].newAl : false;\n                        chk_watch[index].timestamp = new Date().getTime();\n                    }\n                    if (!active_alarms[index]) {\n                        chk_watch[index].startTime = comparesTime(index)[index] ? comparesTime(index)[index]?.timestamp : active_alarms[index]?.dateStart;\n                    }\n                    if (active_alarms[index]) {\n                        chk_watch[index].startTime = chk_watch[index]?.count > 0 ? chk_watch[index]?.timestamp : comparesTime(index)[index] ? comparesTime(index)[index]?.timestamp : active_alarms[index]?.dateStart;\n                    }\n                    if (chk_watch[index]) {\n                        chk_watch[index].note = chk_watch[index].note;\n                        chk_watch[index].acknow = chk_watch[index].acknow;\n                        chk_watch[index].count = chk_watch[index].count;\n                        chk_watch[index].acknow_count = chk_watch[index].acknow_count;\n                        chk_watch[index].newAl = chk_watch[index].newAl ? chk_watch[index].newAl : false;\n                        chk_watch[index].timestamp = chk_watch[index].timestamp;\n                    }\n                    arr[mac].push({\n                        xweb_name: data[mac].name,\n                        mac_address: data[mac].mac_address,\n                        device_name: decodeURI(data[mac].devices[i].name),\n                        device_adr: data[mac].devices[i].adr,\n                        name: data[mac].devices[i].alarm[al].name,\n                        pointId: data[mac].devices[i].alarm[al].pointId,\n                        device_id: data[mac].devices[i].uid,\n                        note: chk_watch[index].note,\n                        acknow: chk_watch[index].acknow,\n                        chk_watch: chk_watch[index].count,\n                        timestamp: chk_watch[index]?.timestamp,\n                        startTime: active_alarms[index]?.dateStart,\n                    })\n                }\n                global.set('chk_watch', chk_watch);\n            }\n            obj_info[data[mac].devices[i].adr] = {\n                name: data[mac].devices[i].name,\n                adr: data[mac].devices[i].adr,\n                deviceId: data[mac].devices[i].uid,\n                model: data[mac].devices[i].model,\n                realTime: obj_realtime[mac][data[mac].devices[i].adr],\n            }\n            obj[mac] = {\n                name: data[mac].name,\n                mac_address: data[mac].mac_address,\n                on: data[mac].on,\n                devices: obj_info,\n                active_alarm: arr[mac],\n                status: status[data[mac].mac_address],\n            };\n        }\n    }\n    return obj;\n}\n\nconst counter_alarm = (data, mac) => {\n    if (!data || typeof data !== \"object\") {\n        return { [mac]: { active: 0, total: 0 } }\n    }\n    let obj_alarm = {};\n    let list = [];\n\n    let total = 0;\n    let active = 0;\n\n    if (Array.isArray(data)) {\n        total = data.length;\n\n        for (let device of data) {\n            if (Array.isArray(device?.alarm)) {\n                for (let al of device.alarm) {\n                    if (al?.value > 0) {\n                        list.push(device.adr ?? \"-\");\n                    }\n                }\n            }\n        }\n    } else {\n        total = Object.keys(data).length;\n        for (let key in data) {\n            let device = data[key];\n            if (Array.isArray(device?.alarm)) {\n                for (let al of device.alarm) {\n                    if (al?.value > 0) {\n                        list.push(device.adr ?? \"-\")\n                    }\n                }\n            }\n        }\n    }\n    active = list.length;\n    obj_alarm[mac] = {\n        active,\n        total,\n    }\n    return obj_alarm;\n}\n\nvar obj_data = {};\nvar arr_data = [];\nlet offline = global.get(\"Offline\") || {};\nfor (let i in msg.config) {\n    let compares = comparesData(msg.config[i].mac_address);\n    if (!offline[msg.config[i].mac_address]) {\n        arr_data.push({\n            _attr: {\n                site_name: compares[msg.config[i].mac_address].name,\n                status_acq: compares[msg.config[i].mac_address].on,\n                mac: compares[msg.config[i].mac_address].mac_address,\n                url: msg.config[i].external_ip + \"?username=\" + msg.config[i].username + \"&&password=\" + msg.config[i].password,\n                communication: \"Online\",\n                owner: msg.config[i].owner,\n            },\n            _status: compares[msg.config[i].mac_address].status,\n            _active_alarms: compares[msg.config[i].mac_address].active_alarm,\n            _devices: compares[msg.config[i].mac_address].devices\n        })\n    } else {\n        arr_data.push({\n            _attr: {\n                site_name: msg.config[i].xweb_name,\n                status_acq: 0,\n                mac: msg.config[i].mac_address,\n                url: msg.config[i].external_ip,\n                communication: \"Offline\",\n                owner: msg.config[i].owner,\n            },\n            _status: {\n                active: 0,\n                total: 0,\n            },\n            _active_alarms: [],\n            _devices: []\n        })\n    }\n}\nmsg.payload = arr_data;\nnode.status({ fill: \"blue\", shape: \"ring\", text: \"done\" })\nmsg.filename = \"/data/files/Data_All.txt\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1100,
+        "y": 840,
+        "wires": [
+            [
+                "c75b0d5c5edde39e",
+                "cbc98b98e1a96a56"
+            ]
+        ]
+    },
+    {
+        "id": "559746ef4df18cd3",
+        "type": "function",
+        "z": "3c0d72dc24f31b4b",
+        "name": "Alarms Aggregate",
+        "func": "let data = msg.payload || {};\n\nfunction comparesData(mac) {\n    let chk_watch = global.get(\"chk_watch\") || {};\n\n    let obj = {};\n    obj[mac] = {};\n    let arr = {};\n    arr[mac] = [];\n    let chk = {};\n    if (data[mac]) {\n        let status = counter_alarm(data[mac]?.devices, mac);\n        for (let i in data[mac].devices) {\n            for (let al in data[mac].devices[i].alarm) {\n                if (data[mac].devices[i].alarm[al].value > 0) {\n                    arr[mac].push({\n                        xweb_name: data[mac].name,\n                        mac_address: data[mac].mac_address,\n                        device_name: data[mac].devices[i].name,\n                        device_adr: data[mac].devices[i].adr,\n                        name: data[mac].devices[i].alarm[al].name,\n                        device_id: data[mac].devices[i].uid,\n                    })\n                }\n                // var index = `${mac}_${data[mac].devices[i].uid}_${data[mac].devices[i].alarm[al].name.replace(/ /g, \"\")}`;\n\n                chk[data[mac].mac_address] = {};\n                chk[data[mac].mac_address].count = 0;\n                chk[data[mac].mac_address].acknow = 0;\n                chk[data[mac].mac_address].acknow_count = 0;\n\n                for (let [key, value] of Object.entries(chk_watch)) {\n\n                    let key_mac = key.split(\"_\")[0];\n                    if (chk[key_mac]) {\n                        chk[key_mac].acknow += value.acknow;\n                        chk[key_mac].count += value.count;\n                        chk[key_mac].acknow_count += value.acknow_count;\n                    }\n                }\n\n                obj[mac] = {\n                    mac_address: mac,\n                    on: data[mac].on,\n                    devices: data[mac].devices,\n                    active_alarm: arr[mac],\n                    status: status[data[mac].mac_address],\n                    chk_watch: chk[mac].count,\n                    acknow: chk[mac].acknow,\n                    acknow_count: chk[mac].acknow_count,\n                };\n            }\n        }\n\n    } else {\n        obj[mac] = {\n            mac_address: mac,\n            on: 0,\n            devices: [],\n            active_alarm: [],\n            status: {\n                active: 0,\n                normal: 0,\n                total: 0,\n            },\n            chk_watch: 0,\n            acknow: 0,\n            acknow_count: 0,\n            newAl: false,\n        };\n\n    }\n    // node.warn(obj[\"000AF61465A4\"])\n    global.set(\"chk_watch\", chk_watch);\n    return obj;\n}\n\nconst counter_alarm = (data, mac) => {\n    let obj_alarm = {};\n    obj_alarm[mac] = {};\n    let total = 0;\n    let active = 0;\n    let al_status = 0;\n\n    let newAlarm = flow.get(\"New_Alarm\") || {};\n    let chk_watch = global.get(\"chk_watch\") || {};\n    if (!data || typeof data !== \"object\" || Object.keys(data).length === 0) {\n        obj_alarm[mac] = { active: 0, total: 0, alarm: 0 }\n        return obj_alarm;\n    }\n    let list = [];\n\n    const device_data = Array.isArray(data) ? data : Object.values(data);\n\n    for (let device of device_data) {\n        if (!device?.alarm) continue;\n\n        for (let al of device.alarm) {\n            let index = `${mac}_${device?.uid ?? \"-\"}_${(al?.name ?? \"unknown\").replace(/ /g, \"_\")}`;\n\n            if (al?.value > 0) {\n                list.push(device?.adr ?? \"-\");\n            }\n\n            // if (!newAlarm[index] && al?.value > 0) {\n            //     al_status = 1;\n            //     newAlarm[index] = {\n            //         timestamp: new Date().getTime(),\n            //         al_status,\n            //     }\n            // }\n\n            if (newAlarm[index] && al?.value === 0) {\n                delete newAlarm[index];\n            }\n        }\n    }\n    active = list.length;\n    total = device_data.length;\n\n    obj_alarm[mac] = {\n        active,\n        total,\n        alarm: al_status,\n    }\n    flow.set(\"New_Alarm\", newAlarm);\n    return obj_alarm;\n}\n\nvar obj_data = {};\nvar arr_data = [];\nlet offline = global.get(\"Offline\") || {};\nfor (let i in msg.config) {\n    let compares = comparesData(msg.config[i].mac_address);\n    if (!offline[msg.config[i].mac_address]) {\n        arr_data.push({\n            store_name: msg.config[i].xweb_name,\n            mac: compares[msg.config[i].mac_address].mac_address || msg.config[i].mac_address,\n            url: `${msg.config[i].external_ip}?username=${msg.config[i].username}&password=${msg.config[i].password}`,\n            communication: \"Online\",\n            owner: msg.config[i].owner,\n            alarm: compares[msg.config[i].mac_address].status || {\n                active: 0,\n                total: 0,\n            },\n            chk_watch: compares[msg.config[i].mac_address].chk_watch ? compares[msg.config[i].mac_address].chk_watch : 0,\n            acknow: compares[msg.config[i].mac_address].acknow ? compares[msg.config[i].mac_address].acknow : 0,\n            acknow_count: compares[msg.config[i].mac_address].acknow_count ? compares[msg.config[i].mac_address].acknow_count : 0,\n        })\n    } else {\n        let chk_offline = global.get(\"CheckCommunications\") || {};\n        // let note = chk_offline[msg.config[i].mac_address] ? chk_offline[msg.config[i].mac_address]?.text !== \"\" ? chk_offline[msg.config[i].mac_address]?.text : \"Acknowledge\" : \"Acknowledge\";\n\n        arr_data.push({\n            store_name: msg.config[i].xweb_name,\n            mac: msg.config[i].mac_address,\n            url: msg.config[i].external_ip,\n            communication: \"Offline\",\n            owner: msg.config[i].owner,\n            note: offline[msg.config[i].mac_address] ? offline[msg.config[i].mac_address]?.note !== \"\" ? offline[msg.config[i].mac_address]?.note : \"Acknowledge\" : \"Acknowledge\",\n            date_offline: chk_offline[msg.config[i].mac_address]?.status == true ? offline[msg.config[i].mac_address]?.dateStart : new Date().getTime(),\n            acknow_offline: offline[msg.config[i].mac_address] ? offline[msg.config[i].mac_address]?.acknow : false,\n            // acknow_offline: true,\n            alarm: {\n                active: 0,\n                total: 0,\n            },\n            chk_watch: 0,\n            acknow: 0,\n            acknow_count: 0,\n        })\n    }\n}\n\nnode.status({ fill: \"blue\", shape: \"ring\", text: \"done\" })\nmsg.payload = arr_data;\nmsg.filename = \"/data/files/Aggregate_Alarms.txt\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1110,
+        "y": 900,
+        "wires": [
+            [
+                "16101f116384e48f"
+            ]
+        ]
+    },
+    {
+        "id": "749118319aee436a",
+        "type": "file in",
+        "z": "3c0d72dc24f31b4b",
+        "name": "",
+        "filename": "filename",
+        "filenameType": "msg",
+        "format": "utf8",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "none",
+        "allProps": false,
+        "x": 800,
+        "y": 860,
+        "wires": [
+            [
+                "e2ee6e7c44a91b6a"
+            ]
+        ]
+    },
+    {
+        "id": "e2ee6e7c44a91b6a",
+        "type": "json",
+        "z": "3c0d72dc24f31b4b",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 930,
+        "y": 860,
+        "wires": [
+            [
+                "86671b5390a2be2c",
+                "559746ef4df18cd3"
+            ]
+        ]
+    },
+    {
+        "id": "01dddb1f6fd42a60",
+        "type": "inject",
+        "z": "3c0d72dc24f31b4b",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "15",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 120,
+        "y": 860,
+        "wires": [
+            [
+                "b89287e3f5e09c36"
+            ]
+        ]
+    },
+    {
+        "id": "f370dcf6ee69b727",
+        "type": "function",
+        "z": "3c0d72dc24f31b4b",
+        "name": "fn:Combine payload",
+        "func": "let records = [];\n\n// Convert Active\nif (msg.Active) {\n    msg.Active.forEach(a => {\n        records.push({\n            ...a,\n            dateEnd: null,\n            note: '',\n            dateAcknow: null,\n        })\n    })\n}\n\n// Convert Stop\nif (msg.Stop) {\n    msg.Stop.forEach(s => {\n        records.push({\n            ...s,\n            dateEnd: s.dateEnd,\n            note: s.note,\n            dateAcknow: s.dateAcknow,\n        })\n\n    })\n}\n// Add last flag to Mustache\nrecords = records.map((r, i) => ({ ...r, last: i === records.length - 1 }));\nif(records.length === 0) return null;\n\nmsg.payload = { records };\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 980,
+        "y": 700,
+        "wires": [
+            [
+                "94cd2e46eb6a9ec6"
+            ]
+        ]
+    },
+    {
+        "id": "94cd2e46eb6a9ec6",
+        "type": "function",
+        "z": "3c0d72dc24f31b4b",
+        "name": "change script sql",
+        "func": "let date_now = new Date().getTime();\nlet rows = msg.payload.records.map(r => {\n    return `(N'${r.store_name}','${r.mac_address}',N'${r.device_name}','${r.device_adr}',\n'${r.alarm_name}',${r.dateStart ?? date_now},${r.dateEnd ?? \"NULL\"},\nN'${r.note ?? \"\"}',${r.dateAcknow ?? \"NULL\"})`;\n});\n\nmsg.values_sql = rows.join(\",\\n\");\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 270,
+        "y": 760,
+        "wires": [
+            [
+                "71cb314a4f243c57"
+            ]
+        ]
+    },
+    {
+        "id": "d5ee1d28d155e5ef",
+        "type": "function",
+        "z": "3c0d72dc24f31b4b",
+        "name": "fn:Combine payload",
+        "func": "let records = [];\n\n// Convert Active\nif (msg.Offline) {\n    msg.Offline.forEach(a => {\n        records.push({\n            ...a,\n            dateEnd: null,\n            note: '',\n            dateAcknow: null,\n        })\n    })\n}\n\n// Convert Stop\nif (msg.Online) {\n    msg.Online.forEach(s => {\n        records.push({\n            ...s,\n            dateEnd: s.dateEnd,\n            note: s.note,\n            dateAcknow: s.dateAcknow,\n        })\n\n    })\n}\n// Add last flag to Mustache\nrecords = records.map((r, i) => ({ ...r, last: i === records.length - 1 }));\nif(records.length === 0) return null;\nmsg.payload = { records };\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 540,
+        "y": 600,
+        "wires": [
+            [
+                "d10b79a98951f65b"
+            ]
+        ]
+    },
+    {
+        "id": "d10b79a98951f65b",
+        "type": "function",
+        "z": "3c0d72dc24f31b4b",
+        "name": "change script sql",
+        "func": "let rows = msg.payload.records.map(r => {\n    return `(N'${r.store_name}','${r.mac_address}',N'${r.device_name}','${r.device_adr}',\nN'${r.alarm_name}',${r.dateStart},${r.dateEnd ?? \"NULL\"},\nN'${r.note ?? \"\"}',${r.dateAcknow ?? \"NULL\"})`;\n});\n\nmsg.values_sql = rows.join(\",\\n\");\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 750,
+        "y": 600,
+        "wires": [
+            [
+                "775be1adbb9f2b1d"
+            ]
+        ]
+    },
+    {
+        "id": "775be1adbb9f2b1d",
+        "type": "template",
+        "z": "3c0d72dc24f31b4b",
+        "name": "SQL script",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "MERGE [CFWcenterAL].[dbo].[ALARMSLOG] AS target\nUSING (\n    VALUES\n{{{values_sql}}}\n) AS src (\n    Store_Name, Mac_Address, Device_Name, Device_Adr,\n    Alarm_Name, Timestamp_Start, Timestamp_End,\n    Note, Timestamp_Acknow\n)\nON (\n    target.Mac_Address = src.Mac_Address AND\n    target.Device_Name = src.Device_Name AND\n    target.Device_Adr = src.Device_Adr AND\n    target.Alarm_Name = src.Alarm_Name AND\n    ISNULL(target.Timestamp_End,'') = ''\n)\nWHEN MATCHED AND src.Timestamp_End IS NOT NULL THEN\n    UPDATE SET\n        target.Timestamp_End    = src.Timestamp_End,\n        target.Note             = src.Note,\n        target.Timestamp_Acknow = src.Timestamp_Acknow\nWHEN NOT MATCHED AND src.Timestamp_End IS NULL THEN\n    INSERT (\n        Store_Name, Mac_Address, Device_Name, Device_Adr,\n        Alarm_Name, Timestamp_Start\n    )\n    VALUES (\n        src.Store_Name, src.Mac_Address, src.Device_Name,\n        src.Device_Adr, src.Alarm_Name, src.Timestamp_Start\n    );\n",
+        "output": "str",
+        "x": 950,
+        "y": 600,
+        "wires": [
+            [
+                "b5b5f2f161275ba1"
+            ]
+        ]
+    },
+    {
+        "id": "b5b5f2f161275ba1",
+        "type": "MSSQL-UCG",
+        "z": "3c0d72dc24f31b4b",
+        "mssqlCN": "c5086d6294c30e01",
+        "name": "ALARMS_LOG",
+        "query": "",
+        "outField": "payload",
+        "x": 1140,
+        "y": 600,
+        "wires": [
+            [
+                "e10a436a66195937"
+            ]
+        ]
+    },
+    {
+        "id": "e905af7b9ce79b07",
+        "type": "debug",
+        "z": "3c0d72dc24f31b4b",
+        "name": "debug 4",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 600,
+        "y": 800,
+        "wires": []
+    },
+    {
+        "id": "e10a436a66195937",
+        "type": "debug",
+        "z": "3c0d72dc24f31b4b",
+        "name": "debug 3",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1320,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "8fb95b7f193f0780",
+        "type": "debug",
+        "z": "3c0d72dc24f31b4b",
+        "name": "change settings and new store",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 730,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "9757618cf1594456",
+        "type": "function",
+        "z": "3c0d72dc24f31b4b",
+        "name": "XWEB Core",
+        "func": "const n = msg.test ? !0 : !1\nlet now = new Date()\n\nlet inititate = false\nconst setTopic = (topic) => msg.topic = topic\n\nconst xsysinfo = global.get(\"xsysinfo\") || {}\nconst xlogin = global.get(\"xlogin\") || {}\nconst xgetsetup = global.get(\"xgetsetup\") || {}\nconst xstream = global.get(\"xstream\") || {}\nconst xrefresh = global.get(\"xrefresh\") || {}\nconst xgetxj = global.get(\"xgetxj\") || {}\nconst xalarms = global.get(\"xalarms\") || {}\n\nif (msg.action) {\n    if (msg.action === \"changeSetting\") {\n        let { requestFrequency, requestTimeout,\n            processesLimited, endpointConfigs, setEnableAll,\n            setGetsysinfoAll, setGetsetupAll } = msg.payload\n        requestFrequency && context.set(\"requestFrequency\", requestFrequency);\n        requestTimeout && context.set(\"requestTimeout\", requestTimeout);\n        processesLimited && context.set(\"processesLimited\", processesLimited);\n        endpointConfigs && context.set(\"endpointConfigs\", endpointConfigs);\n        requestFrequency = context.get(\"requestFrequency\");\n        requestTimeout = context.get(\"requestTimeout\");\n        processesLimited = context.get(\"processesLimited\");\n        endpointConfigs = context.get(\"endpointConfigs\");\n        setEnableAll && Object.values(context.get(\"threads\") || {}).forEach(t => {\n            t.enabled = true\n        })\n        setGetsysinfoAll && Object.values(context.get(\"threads\") || {}).forEach(t => {\n            t.sysinfoIsRequired = true\n        })\n        setGetsetupAll && Object.values(context.get(\"threads\") || {}).forEach(t => {\n            t.getsetupIsRequired = true\n        })\n        msg.payload = {\n            requestFrequency,\n            requestTimeout,\n            processesLimited,\n            endpointConfigs\n        }\n        setTopic(\"Change Setting\")\n    } else if (msg.action === \"readThreads\") {\n        let { mac } = msg.payload\n        if (mac) {\n            msg.payload = context.get(`threads.${mac}`)\n            setTopic(\"thread\")\n        } else {\n            msg.payload = context.get(\"threads\")\n            setTopic(\"threads\")\n        }\n    } else if (msg.action === \"setThreads\") {\n        let { mac } = msg.payload\n        if (mac) {\n            let singleThread = context.get(`threads.${mac}`)\n            Object.entries(msg.payload).forEach(([par, v]) => {\n                singleThread[par] = v\n            })\n            msg.payload = context.get(`threads.${mac}`)\n            setTopic(\"thread\")\n        } else {\n            msg.payload = context.get(\"threads\")\n            setTopic(\"threads\")\n        }\n    } else if (msg.action === \"start\") {\n        inititate = true\n        msg.payload = { inititate }\n        setTopic(\"Initiate\")\n    } else if (msg.action === \"enabled\") {\n        let { enabled } = msg.payload\n        context.set(\"enabled\", enabled ? !0 : !1)\n        msg.payload = { enabled: context.get(\"enabled\") }\n        setTopic(\"Enabled\")\n    }\n}\n\nif (!inititate) {\n    return msg\n}\nlet processed_withLimited = pLimit(context.get(\"processesLimited\")) //limit Concurrent Processes\nlet commonOptions = {\n    headers: {\n        \"content-type\": \"application/x-www-form-urlencoded\"\n    }\n}\nconst res2JSON = (res) => res.json()\nconst params2Body = (params) => new myURL.URLSearchParams(params).toString()\nconst getThread = (mac) => {\n    return context.get(`threads.${mac}`) ||\n        (context.set(`threads.${mac}`, { enabled: true, getsetupIsRequired: true, sysinfoIsRequired: true, mac }),\n            context.get(`threads.${mac}`))\n}\nconst timelapse = () => (new Date().getTime() - now.getTime()) / 1000\nconst statusWithTs = (result, mac, part, host) => {\n    context.completeds = (context.completeds || 0) + 1\n    if (result !== \"ok\") {\n        context.err = (context.err || 0) + 1;\n        node.send({ payload: { result, mac, part, host }, topic: \"Return Status\" });\n    }\n    node.status({ fill: \"yellow\", shape: \"dot\", text: `Running ${context.completeds}/${context.total || 0} err:${context.err || 0}` });\n    return {\n        mac, part, result, host,\n        secs: timelapse()\n    }\n}\nconst createTimeoutController = () => {\n    let controller = new AbortController()\n    const timeoutId = setTimeout(() => {\n        controller.abort();\n    }, context.get(\"requestTimeout\"))\n    return { signal: controller.signal, timeoutId }\n}\n\n\n\nconst sysInfoOnData = (currentContext, endpointConfig) => {\n    return (data) => {\n        let { mac } = currentContext\n        let { host } = endpointConfig\n        // currentContext.sysinfo_data = { mac, ...data }\n        xsysinfo[mac].sysinfo_data = { mac, ts: new Date().getTime(), ...data }\n        delete currentContext.sysinfo_err\n\n        n && node.send({ payload: data, topic: \"sysinfo\" })\n\n        if (typeof data == \"object\") {\n            if (data.error === \"PERMISSION_DENIED\") {\n                // login(currentContext,endpointConfig)\n                // return statusWithTs(\"error\", mac, \"sysinfo\", host)\n                return false\n            } else {\n                currentContext.sysinfoIsRequired = false\n                // return statusWithTs(\"ok\", mac, \"sysinfo\", host)\n                return true\n            }\n        }\n        // return statusWithTs(\"error\", mac, \"sysinfo.data\", host)\n        return false\n    }\n}\nconst getsetupOnData = (currentContext, endpointConfig) => {\n    return (data) => {\n        let { mac } = currentContext\n        let { host } = endpointConfig\n        // currentContext.setup_data = { mac, ...data }\n        xgetsetup[mac].setup_data = { mac, ts: new Date().getTime(), ...data }\n        delete currentContext.setup_err\n        delete xgetsetup[mac].setup_err\n\n        n && node.send({ payload: data, topic: \"getsetup\" })\n\n        if (typeof data == \"object\") {\n            if (data.error === \"PERMISSION_DENIED\") {\n                // login(currentContext,endpointConfig)\n                return statusWithTs(\"error\", mac, \"getsetup\", host)\n            } else {\n                currentContext.getsetupIsRequired = false\n                return statusWithTs(\"ok\", mac, \"getsetup\", host)\n            }\n        }\n        return statusWithTs(\"error\", mac, \"getsetup.data\", host)\n    }\n}\nconst streamOnData = (currentContext, endpointConfig) => {\n    return async (data) => {\n        let { mac } = currentContext\n        let { host } = endpointConfig\n        // currentContext.stream_data = { mac, ...data }\n        xstream[mac].stream_data = { mac, ts: new Date().getTime(), ...data }\n        delete currentContext.stream_err\n        delete xstream[mac].stream_err\n        n && node.send({ payload: data, topic: \"stream\" })\n        let backlogs = flow.get(\"backlogs\")\n        delete backlogs[mac]\n        if (typeof data == \"object\") {\n            if (currentContext.sysinfoIsRequired) {\n                await sysinfo(endpointConfig)\n            }\n            if (data.error === \"PERMISSION_DENIED\") {\n                let result = await login(endpointConfig, stream)\n                return result\n            } else if (data.status === \"ok\") {\n                await alarms(endpointConfig);\n                if (currentContext.getsetupIsRequired) {\n                    return await getsetup(endpointConfig)\n                }\n                let result = await login(endpointConfig, null, \"refresh\")\n                if (result.result === \"ok\") {\n                    result.part = \"stream+refresh\"\n                    return result\n                }\n                return statusWithTs(\"ok\", mac, \"stream\", host)\n            }\n        }\n    }\n}\nconst alarmsOnData = (currentContext, endpointConfig) => {\n    return async (data) => {\n        let { mac } = currentContext;\n        let { host } = endpointConfig;\n\n        if (!xalarms[mac]) xalarms[mac] = {};\n        xalarms[mac].alarms_data = { mac, ts: new Date().getTime(), ...data }\n        delete currentContext.alarms_err\n        delete xalarms[mac].alarms_err\n        n && node.send({ payload: data, topic: \"alarms\" });\n\n        let backlogs = flow.get(\"backlogs\");\n        delete backlogs[mac];\n        if (typeof data == \"object\") {\n            if (currentContext.sysinfoIsRequired) {\n                await sysinfo(endpointConfig)\n            }\n            if (data.error === \"PERMISSION_DENIED\") {\n                let result = await login(endpointConfig, stream);\n                return result;\n            } else if (data.status === \"ok\") {\n                let result = await login(endpointConfig, null, \"refresh\")\n                if (result.result === \"ok\") {\n                    result.part = \"alarms+refresh\"\n                    return result\n                }\n                return statusWithTs(\"ok\", mac, \"alarms\", host)\n            }\n        }\n    }\n}\nconst loginOnData = (currentContext, callback, endpointConfig, action) => {\n    return async (data) => {\n        let { mac } = currentContext\n        let { host } = endpointConfig\n        n && node.send({ payload: data, topic: \"login\" })\n        if (action) {\n            // currentContext[`login_${action}_data`] = { mac, ...data }\n            xlogin[mac][`login_${action}_data`] = { mac, ts: new Date().getTime(), ...data }\n        } else {\n            // currentContext.login_data = data\n            xlogin[mac].login_data = { mac, ts: new Date().getTime(), ...data }\n        }\n        delete currentContext.login_err\n        delete xlogin[mac].login_err\n\n        if (data.status !== \"ok\" /*|| !(data.user) || !(data.user.sses)*/) {\n            // currentContext.login_err = data\n            xlogin[mac].login_err = { mac, ts: new Date().getTime(), data }\n            // if (endpointConfig.auth.username != \"Administrator\") {\n            let xj = await getXj(endpointConfig)\n            n && node.send({ payload: xj, topic: \"XJPasswd\" })\n            if (xj) { //try with xj\n                endpointConfig.auth.username = \"Administrator\"\n                endpointConfig.auth.password = xj.replace(/^\\s+|\\s+$/g, '');\n                let res = await login(endpointConfig, callback) //call itself\n                if (res.result === \"error\") {\n                    res.part = \"login.xj.invalid\"\n                }\n                n && node.send({ payload: { res } })\n                return res\n            } else {\n                return statusWithTs(\"error\", mac, \"login.xj\", host)\n            }\n            // } else {\n            //     node.send({ payload: endpointConfig.auth.username })\n            //     return statusWithTs(\"error\", mac, \"login\", host)\n            // }\n        } else {\n            n && node.send({ payload: \"login ok\" });\n\n            if (typeof callback === 'function') {\n                n && node.send({ payload: \"callstream\" });\n                return await callback(endpointConfig);\n            }\n            return statusWithTs(\"ok\", mac, \"login\")\n        }\n    }\n}\nconst sysinfo = (endpointConfig) => {\n    let { mac, host, urls } = endpointConfig\n    let currentContext = getThread(mac)\n    if (!currentContext[\"enabled\"]) {\n        // Promise.resolve(() => { return statusWithTs(\"blocked\", mac, \"getsetup\", host) })\n        return Promise.resolve(statusWithTs(\"blocked\", mac, \"sysinfo disabled\", host))\n    }\n    let controller = createTimeoutController()\n    return fetch(urls.sysinfo, {\n        method: \"GET\",\n        ...commonOptions,\n        signal: controller.signal,\n        agent: (urls.getsetup.startsWith(\"https\") && new https.Agent({ rejectUnauthorized: false })) || null\n    })\n        .then(res2JSON)\n        .then(sysInfoOnData(currentContext, endpointConfig))\n        .catch(err => {\n            // currentContext.sysinfo_err = err\n            xsysinfo[mac].sysinfo_err = { mac, ts: new Date().getTime(), ...err }\n            n && node.send({ payload: err, topic: \"sysinfo\" })\n            clearTimeout(controller.timeoutId);\n            return statusWithTs(\"error\", mac, \"sysinfo\", host)\n        }).finally(r => {\n            clearTimeout(controller.timeoutId);\n        })\n}\nconst xjEndpoint = \"http://lotus.snapx.cloud/api/v1/xjpasswd\"\nconst getXj = (endpointConfig) => {\n    let { mac } = endpointConfig\n    let currentContext = getThread(mac)\n    let controller = createTimeoutController()\n    return fetch(xjEndpoint + `?MAC=${mac.toUpperCase()}`, {\n        method: \"GET\",\n        ...commonOptions,\n        signal: controller.signal,\n        agent: (xjEndpoint.startsWith(\"https\") && new https.Agent({ rejectUnauthorized: false })) || null\n    })\n        .then(res => res.text())\n        .then(data => {\n            delete currentContext.xj_err\n            delete xgetxj[mac].xj_err\n\n            // currentContext.xj_data = data\n            xgetxj[mac].xj_data = { mac, ts: new Date().getTime(), ...data }\n            return data\n        })\n        .catch(err => {\n            // currentContext.xj_err = err\n            xgetxj[mac].xj_err = { mac, ts: new Date().getTime(), ...err }\n            n && node.send({ payload: err, topic: \"xj\" })\n            clearTimeout(controller.timeoutId);\n            return null\n        }).finally(r => {\n            clearTimeout(controller.timeoutId);\n        })\n}\nconst getsetup = (endpointConfig) => {\n    let { mac, host, urls } = endpointConfig\n    let currentContext = getThread(mac)\n    if (!currentContext[\"enabled\"]) {\n        // Promise.resolve(() => { return statusWithTs(\"blocked\", mac, \"getsetup\", host) })\n        return Promise.resolve(statusWithTs(\"blocked\", mac, \"getsetup diabled\", host))\n    }\n    let { login_data = {} } = xlogin[mac], { user = {} } = login_data, { sses } = user\n    let SSES = sses\n    // n&&node.send({ payload: { currentContext }, topic: \"test SSES\" })\n    if (!SSES) {\n        // currentContext.stream_err = { mac,error: \"NO SSES\" }\n        xgetsetup[mac].stream_err = { mac, ts: new Date().getTime(), error: \"NO SSES\" }\n    }\n    let params = { SSES, language: \"en-GB\" }\n    let controller = createTimeoutController()\n    return fetch(urls.getsetup, {\n        method: \"POST\",\n        body: params2Body(params),\n        ...commonOptions,\n        signal: controller.signal,\n        agent: (urls.getsetup.startsWith(\"https\") && new https.Agent({ rejectUnauthorized: false })) || null\n    })\n        .then(res2JSON)\n        .then(getsetupOnData(currentContext, endpointConfig))\n        .catch(err => {\n            // currentContext.setup_err = err\n            xgetsetup[mac].setup_err = { mac, ts: new Date().getTime(), ...err }\n            n && node.send({ payload: err, topic: \"getsetup\" })\n            clearTimeout(controller.timeoutId);\n            return statusWithTs(\"error\", mac, \"getsetup\", host)\n        }).finally(r => {\n            clearTimeout(controller.timeoutId);\n        })\n}\nconst stream = (endpointConfig) => {\n    let { mac, host, urls } = endpointConfig\n    let currentContext = getThread(mac)\n    if (!currentContext[\"enabled\"]) {\n        // Promise.resolve(() => { return statusWithTs(\"blocked\", mac, \"stream diabled\", host) })\n        return Promise.resolve(statusWithTs(\"blocked\", mac, \"stream disabled\", host))\n    }\n    let { login_data = {} } = xlogin[mac], { user = {} } = login_data, { sses } = user\n\n    let SSES = sses\n    if (!SSES) {\n        // currentContext.stream_err = { error: \"NO SSES\" }\n        xstream[mac].stream_err = { mac, ts: new Date().getTime(), error: \"NO SSES\" }\n    }\n    let params = { SSES, complete: 1 }\n    let controller = createTimeoutController()\n    return fetch(urls.stream, {\n        method: \"POST\",\n        body: params2Body(params),\n        ...commonOptions,\n        signal: controller.signal,\n        agent: (urls.stream.startsWith(\"https\") && new https.Agent({ rejectUnauthorized: false })) || null\n    })\n        .then(res2JSON)\n        .then(streamOnData(currentContext, endpointConfig))\n        .catch(err => {\n            xstream[mac].stream_err = { mac, ts: new Date().getTime(), ...err }\n            n && node.send({ payload: err, topic: \"stream catched 1\" })\n            clearTimeout(controller.timeoutId);\n            return statusWithTs(\"timeout\", mac, \"stream timeout\", host)\n        })\n        .finally(() => {\n            clearTimeout(controller.timeoutId);\n        })\n}\nconst alarms = (endpointConfig) => {\n    let { mac, host, urls } = endpointConfig;\n    let currentContext = getThread(mac);\n    if (!currentContext[\"enabled\"]) {\n        return Promise.resolve(statusWithTs(\"blocked\", mac, \"alarms disabled\", host));\n    }\n    if (!xalarms[mac]) xalarms[mac] = {};\n    // --- mutex เพื่อป้องกันการเรียกซ้อน ---\n    if (xalarms[mac].alarmsRunning) {\n        node.warn(\"alarms skipped (running) : \" + mac);\n        return Promise.resolve(statusWithTs(\"blocked\", mac, \"alarms\", host));\n    }\n    xalarms[mac].alarmsRunning = true;\n\n    let { login_data = {} } = xlogin[mac], { user = {} } = login_data, { sses } = user\n\n    if (!sses) {\n        xalarms[mac].alarms_err = { mac, ts: new Date().getTime(), error: \"NO SSES\" };\n    }\n    let params = new myURL.URLSearchParams();\n    params.append(\"SSES\", sses);\n    params.append(\"action\", \"active_alarms\");\n    let controller = createTimeoutController();\n\n    return fetch(urls.alarms, {\n        method: \"POST\",\n        body: params,\n        ...commonOptions,\n        signal: controller.signal,\n        agent: (urls.alarms.startsWith(\"https\") && new https.Agent({ rejectUnauthorized: false })) || null\n    })\n        .then(res2JSON)\n        .then(alarmsOnData(currentContext, endpointConfig))\n        .catch(err => {\n            xalarms[mac].alarms_err = { mac, ts: new Date().getTime(), ...err }\n            n && node.send({ payload: err, topic: \"alarms catched 1\" })\n            clearTimeout(controller.timeoutId);\n            return statusWithTs(\"timeout\", mac, \"alarms timeout\", host)\n        })\n        .finally(() => {\n            xalarms[mac].alarmsRunning = false;\n            clearTimeout(controller.timeoutId);\n        })\n}\n\nconst login = (endpointConfig, callback, action) => {\n    let { mac, host, urls, auth } = endpointConfig\n    let { auth_mode, username, password } = auth\n    let currentContext = getThread(mac)\n    if (!currentContext[\"enabled\"]) {\n        // Promise.resolve(() => { return statusWithTs(\"blocked\", mac, \"stream\", host) })\n        return Promise.resolve(statusWithTs(\"blocked\", mac, \"login disabled\", host))\n    }\n    let SSES;\n\n    if (action === \"refresh\") {\n        let { login_data = {} } = xlogin[mac], { user = {} } = login_data, { sses } = user\n        SSES = sses\n    }\n    let params = {\n        action: action || \"login\",\n        auth_mode,\n        username,\n        password,\n        initparam: -1,\n        SSES\n    }\n    let controller = createTimeoutController()\n    return fetch(urls.login, {\n        method: \"POST\",\n        body: params2Body(params),\n        ...commonOptions,\n        signal: controller.signal,\n        agent: (urls.login.startsWith(\"https\") && new https.Agent({ rejectUnauthorized: false })) || null\n    })\n        .then(res2JSON)\n        .then(loginOnData(currentContext, callback, endpointConfig, action))\n        .catch(err => {\n            // currentContext.login_err = { mac, ...err }\n            xlogin[mac].login_err = { mac, ts: new Date().getTime(), ...err }\n            n && node.send({ payload: err, topic: \"login\" })\n            clearTimeout(controller.timeoutId);\n            return statusWithTs(\"error\", mac, \"login\", host)\n        }).finally(r => {\n            clearTimeout(controller.timeoutId);\n        })\n}\n\nlet auth = {\n    auth_mode: \"standard\",\n    username: \"request\",\n    password: \"027220245s\",\n}\nlet mac = \"000AF61469BD\"\nlet url = \"http://9.1.0.7:50007/\"//\n// url =\"http://10.101.0.29:41129/\"\nlet urls = {\n    sysinfo: url + \"cgi-bin/sysinfo.lua\",\n    login: url + \"cgi-bin/login.lua\",\n    stream: url + \"cgi-bin/stream.lua\",\n    getsetup: url + \"cgi-bin/getsetup.lua\",\n}\nlet endpointConfig = { mac, urls, auth }\nlet test = msg.test ? [endpointConfig] : null\n\nif (context.get(\"enabled\") && !context.get(\"running\")) {\n    context.set(\"running\", true)\n    context.set(\"timing\", {})\n    let endpointConfigs = test || context.get(\"endpointConfigs\") || []\n    context.completeds = 0;\n    context.err = 0\n    context.total = endpointConfigs.length\n    node.send(msg)\n    flow.set(\"backlogs\", {})\n    const tasks = endpointConfigs.map((endpointConfig) =>\n        processed_withLimited(() => stream(endpointConfig)));\n    endpointConfigs.forEach(e => {\n        flow.get(\"backlogs\")[e.mac] = { e };\n        !xsysinfo[e.mac] && (xsysinfo[e.mac] = {});\n        !xlogin[e.mac] && (xlogin[e.mac] = {});\n        !xgetsetup[e.mac] && (xgetsetup[e.mac] = {});\n        !xstream[e.mac] && (xstream[e.mac] = {});\n        !xrefresh[e.mac] && (xrefresh[e.mac] = {});\n        !xgetxj[e.mac] && (xgetxj[e.mac] = {});\n        !xalarms[e.mac] && (xalarms[e.mac] = {});\n    });\n\n    node.status({ fill: \"yellow\", shape: \"dot\", text: `Running ${context.completeds}/${context.total} err:${context.err || 0}` });\n    Promise.allSettled(tasks).then((results) => {\n        // node.send({payload:results}) \n        let totalSecs = (new Date().getTime() - now.getTime()) / 1000\n        // let threads = context.get(\"threads\")\n        let fulfilleds = results.filter(r => r.status === \"fulfilled\")\n        let rejecteds = results.filter(r => r.status === \"rejected\")\n\n        let fails = fulfilleds.filter(r => r.value.result === \"error\")\n        let timeouts = fulfilleds.filter(r => r.value.result === \"timeout\")\n        let blockeds = fulfilleds.filter(r => r.value.result === \"blocked\")\n        let successes = fulfilleds.filter(r => r.value.result === \"ok\")\n\n        // blockeds.forEach(r => {\n        //     if (r.value && r.value.mac && threads[r.value.mac]) {\n        //         threads[r.value.mac].enabled = false\n        //         threads[r.value.mac][\"nextAvailable\"] = (new Date().getTime()) + 900000\n        //     }\n        // })\n        // timeouts.forEach(r => {\n        //     if (r.value && r.value.mac && threads[r.value.mac]) {\n        //         threads[r.value.mac].enabled = false\n        //         threads[r.value.mac][\"nextAvailable\"] = (new Date().getTime()) + 900000\n        //     }\n        // })\n        context.set(\"running\", false)\n        const resMap = (r) => {\n            let { host, mac, result, secs } = r.value\n            return [host, mac, result, secs]\n        }\n        node.send(\n            [, {\n                payload: {\n                    totalSecs,\n                    rejecteds,\n                    blockeds: blockeds.map(resMap),\n                    timeouts: timeouts.map(resMap),\n                    fails: fails.map(resMap),\n                    successes: successes.map(resMap),\n                    results\n                }\n            }]\n        )\n        // global.set(\"endpoints_data\",threads)\n        node.status({ fill: \"green\", shape: \"dot\", text: `Completed ${context.completeds}/${context.total}` });\n    });\n\n} else {\n    node.status({ fill: \"red\", shape: \"dot\", text: `Blocked ${context.completeds}/${context.total}` });\n    msg.payload = { ...msg.payload, blocked: true }\n    return msg\n}\n",
+        "outputs": 2,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "// Code added here will be run once\n// whenever the node is started.\nglobal.get(\"xsysinfo\") || global.set(\"xsysinfo\", {})\nglobal.get(\"xlogin\") || global.set(\"xlogin\", {})\nglobal.get(\"xgetsetup\") || global.set(\"xgetsetup\", {})\nglobal.get(\"xstream\") || global.set(\"xstream\", {})\nglobal.get(\"xrefresh\") || global.set(\"xrefresh\", {})\nglobal.get(\"xgetxj\") || global.set(\"xgetxj\", {})\nglobal.get(\"xalarms\") || global.set(\"xalarms\", {})\n\ncontext.get(\"threads\") || context.set(\"threads\", {});\ncontext.get(\"enabled\") || context.set(\"enabled\", false);\n\ncontext.get(\"requestFrequency\") || context.set(\"requestFrequency\", 180000); //3 minutes\ncontext.get(\"processesLimited\") || context.set(\"processesLimited\", 50);\ncontext.get(\"requestTimeout\") || context.set(\"requestTimeout\", 30000);\ncontext.get(\"endpointConfigs\") || context.set(\"endpointConfigs\", []);\ncontext.get(\"running\") || context.set(\"running\", false);\ncontext.get(\"timing\") || context.set(\"timing\", {});\ncontext.completeds !== undefined || (context.completeds = 0);\ncontext.total !== undefined || (context.total = 0);\n\n//Test\ncontext.set(\"enabled\", true);\ncontext.set(\"running\", false);\nnode.status({ fill: \"green\", shape: \"dot\", text: `Ready` });",
+        "finalize": "",
+        "libs": [
+            {
+                "var": "fetch",
+                "module": "node-fetch"
+            },
+            {
+                "var": "myURL",
+                "module": "url"
+            },
+            {
+                "var": "pLimit",
+                "module": "p-limit"
+            },
+            {
+                "var": "AbortController",
+                "module": "abort-controller"
+            },
+            {
+                "var": "https",
+                "module": "https"
+            }
+        ],
+        "x": 490,
+        "y": 240,
+        "wires": [
+            [],
+            [
+                "ecf317a7a652f0cd",
+                "2ca3bbb2b5032e66"
+            ]
+        ],
+        "inputLabels": [
+            "actions"
+        ],
+        "outputLabels": [
+            "",
+            "Process Results"
+        ]
+    },
+    {
+        "id": "cbc98b98e1a96a56",
+        "type": "debug",
+        "z": "3c0d72dc24f31b4b",
+        "name": "debug 6",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1220,
+        "y": 760,
+        "wires": []
+    },
+    {
+        "id": "b18108d31abcf91d",
+        "type": "function",
+        "z": "3c0d72dc24f31b4b",
+        "name": "JSON Parse",
+        "func": "msg.payload = JSON.parse(msg.payload)\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 610,
+        "y": 700,
+        "wires": [
+            [
+                "6f6029a523831a67"
+            ]
+        ]
+    },
+    {
+        "id": "c5086d6294c30e01",
+        "type": "MSSQL-UCG-CN",
+        "name": "",
+        "server": "192.168.200.221",
+        "port": "1433",
+        "encyption": false,
+        "database": "CFWcenterAL"
+    },
+    {
+        "id": "60353958c05ba49b",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "node-red-contrib-ucg-mssql": "0.1.8"
+        }
+    }
+]
